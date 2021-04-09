@@ -1,0 +1,166 @@
+---
+title: 'Lake Urmia Research Articles: Summary'
+author: "David E. Rosenberg"
+date: "August 10, 2019"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+```{r, include=FALSE}
+xPackages <- c("ggplot2","devtools","dplyr","lubridate", "sqldf","plyr","htmlTable","magrittr","rmarkdown", "data.table", "stringr")
+require(xPackages)
+lapply(xPackages,require, character.only = TRUE)
+lapply(xPackages,library, character.only = TRUE)
+
+#install.packages("tinytex", repo="http://cran.rstudio.com/")
+#tinytex::install_tinytex()  # install TinyTeX
+
+tArticleQuery <- '“Lake” and (“Urmia” or “Ormayeh” or “Orumiyeh”)'
+
+# Read CSV into R
+# Columns A-X (add Abstract and author key works on download)
+ fArticles <- fread(file="Scopus-LakeUrmia-Aug8-2019.csv", sep=",")
+ dfArticleData <- as.data.frame(fArticles)
+
+sapply(dfArticleData, class)
+
+#Group years. Create as a new factor YearType
+cPeriods <- c('Before ULRP', 'After ULRP')
+cPeriodBreak <- c(2013,2030)
+dfArticleData$YearPeriod <- cPeriods[3]
+
+for (i in 2:1) {
+  index <- dfArticleData$Year <= cPeriodBreak[i]
+  dfArticleData$YearPeriod[index] = cPeriods[i]
+}
+#Find the max year
+
+
+barlines <- "#1F3552" #Black outline
+cFills <- c('#6baed6', '#3182bd', '#08519c') #Fill colors for bars. Light blue, medium blue, dark blue
+
+minYear <- min(dfArticleData$Year)
+minYear <- 1984
+maxYear <- max(dfArticleData$Year)
+
+### Figure 1 - Bar graph of number of journals per year by period
+#Create version of the data set with YearType ordered so the legend and bar colors correctly plot.
+# See https://ilari.scheinin.fi/ggplot-2-0-and-the-missing-order-aesthetic/ for particulars
+dfArticleOrdered <- dfArticleData %>% filter(Year >= minYear) %>%
+  mutate(YearPeriod=factor(YearPeriod, levels=cPeriods, ordered=TRUE))
+
+#Similarly order the datafame
+dfArticleOrdered %>%
+  ungroup() %>%
+  arrange(-as.integer(YearPeriod))
+
+``` 
+# Number of Articles from SCOPUS
+Keyword search = `r tArticleQuery`
+
+Number of articles = `r nrow(dfArticleData)`
+```{r, echo=FALSE, results=TRUE, message=FALSE}
+#tArticleQuery
+#paste("Number of articles = ", nrow(dfArticleData))
+
+``` 
+
+## Figure 1. Articles by Year
+
+```{r, fig.width=13, echo=FALSE, results=FALSE, message=FALSE}
+#Plot barplot
+ggplot(data = dfArticleOrdered, aes(x = dfArticleOrdered$Year)) + 
+  geom_bar(breaks=seq(minYear,maxYear, by=1), 
+                 colour = barlines,
+                 position = "identity",
+                 aes(fill=dfArticleOrdered$YearPeriod)) +
+  
+  labs(x="", y="Publications\n(number per year)") +
+  scale_x_continuous(breaks = seq(minYear,maxYear,1)) +
+  scale_fill_manual(values=cFills, name="Period", labels=cPeriods) +
+  theme_bw() +
+  theme(text = element_text(size=20), legend.text=element_text(size=18),
+        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5)) #,angle=90,
+  
+```
+
+## Figure 2. Most Cited Articles
+
+```{r, fig.width=13, fig.height=7, echo=FALSE, results=FALSE, message=FALSE}
+# To obtain the most frequent cited manuscripts:
+
+nRows = 25
+
+# Query and arrange the top citation counts
+  
+dfArticleCites <- dfArticleData %>% 
+    ungroup() %>%
+    arrange(desc(dfArticleData$`Cited by`))
+
+#Formulate the paper lable : Author (Year) or Author et al (Year)
+# Count the number of authors by the number of commas in the author field
+dfArticleCites$NumAuthors <- str_count(dfArticleCites$Authors,",") + 1
+dfArticleCites$FirstAuthorLN <- paste(word(dfArticleCites$Authors,start=1,end=1," ")," ")
+dfArticleCites$SecondAuthorLN <- paste(word(dfArticleCites$Authors,start=3,end=3," ")," ")
+
+
+#Single author => Last Name (Year)
+dfArticleCites$PaperDesc <- paste0(dfArticleCites$FirstAuthorLN,"(",dfArticleCites$Year,")")
+#Two author => First and Last (Year)
+dfArticleCites$PaperDesc[dfArticleCites$NumAuthors == 2] <- paste0(dfArticleCites$FirstAuthorLN[dfArticleCites$NumAuthors ==2],"and ",dfArticleCites$SecondAuthorLN[dfArticleCites$NumAuthors == 2], "(",dfArticleCites$Year[dfArticleCites$NumAuthors == 2],")")
+# Multi author => Last Name et al (Year)
+dfArticleCites$PaperDesc[dfArticleCites$NumAuthors > 2] <- paste0(dfArticleCites$FirstAuthorLN[dfArticleCites$NumAuthors > 2],"et al. ", "(",dfArticleCites$Year[dfArticleCites$NumAuthors > 2],")")
+
+
+#Plot barplot 
+ggplot(dfArticleCites[0:nRows,], aes(x=reorder(PaperDesc,`Cited by`), y=`Cited by`)) +
+  geom_col() +
+  
+  labs(y="Citations (count)", x="") +
+  theme_bw() +
+  theme(text = element_text(size=20), legend.text=element_text(size=18),
+        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5)) +
+  coord_flip()
+
+  
+```
+
+## Figure 3. Most frequent journals
+
+```{r, fig.width=13, fig.height=7, echo=FALSE, results=FALSE, message=FALSE}
+
+### Most frequent journals
+# To obtain the most frequent cited manuscripts:
+
+nRows = 25
+
+
+dfJournalCounts <- ddply(dfArticleData, .(`Source title`), nrow) 
+
+dfJournalCounts <- dfJournalCounts %>%
+    ungroup() %>%
+    arrange(desc(dfJournalCounts$V1))
+
+#Grab the first 6 words for the source
+dfJournalCounts$SourceTitleShort <- str_trunc(dfJournalCounts$`Source title`,50,side="right")
+
+#Plot barplot
+ggplot(data = dfJournalCounts[0:nRows,], aes(x=reorder(SourceTitleShort,V1),y=V1)) + 
+  geom_bar( 
+           stat = "identity",
+           position = "identity") +
+  
+  labs(x="Journal", y="Publications (count)") +
+  #scale_x_continuous(breaks = seq(minYear,maxYear,1)) +
+  #scale_fill_manual(values=cFills, name="Period", labels=cPeriods) +
+  theme_bw() +
+  theme(text = element_text(size=20), legend.text=element_text(size=18),
+        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5)) +
+  coord_flip()#,angle=90,
+
