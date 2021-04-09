@@ -37,7 +37,7 @@ The Scopus database was quried for articles with the key words  ( "Lake"  AND  (
 Then the Bibliometrix package was used to make the remaining plots of article data.
 
 ## Recommended Citation
-David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. 
+David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis
 ```{r Includes, echo=FALSE, results=FALSE, fig.width=13, fig.height=8, include=FALSE}
 # BibliometrixUrmia.r
 #
