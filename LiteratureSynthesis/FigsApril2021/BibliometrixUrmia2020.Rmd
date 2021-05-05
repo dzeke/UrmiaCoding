@@ -23,6 +23,7 @@ The Scopus database was quried for articles with the key words  ( "Lake"  AND  (
  2. **Scopus-LakeUrmia-Sep15-2020.bib** - Scopus database query made on Sept 15, 2020 (2nd batch of articles)
  3. **LakeUrmiaWaterLevel-1966-Vaheddost.xlsx** - Monthly lake level data provided by Vaheddost via email. Used in Figure 1.
  4. **Lake_Urmia_WaterLevel_Precip_Data.xlsx** - Annual lake level and precipitation data provided by Parsinejad. Used in Figure 6 in Section 4.7.
+ 5. **Lake_Urmia_Data_1995-2015-Sima.xlsx** - Lake elevation vs volume. Data from Sima et al (2021) - https://www.sciencedirect.com/science/article/pii/S2214581821000410
 
 ## Ouput files:
 
@@ -32,12 +33,15 @@ The Scopus database was quried for articles with the key words  ( "Lake"  AND  (
 #Outputs
 
  1. Plot of articles versus time compared to lake level (Fig. 1 in the synthesis article)
- 2. Plot of observed and planned lakes levels vs basin precipitation (Figure 6 in Secton 4.7 of the synthesis article)
+ 2. Plot of lake restoration progress over time (Figure 6 in Secton 4.7 of the synthesis article). Three different versions:
+    a. Lake Level (left axis) and precipitation (right axis)
+    b. Lake volume (left axis)
+    c. Lake volume (left axis) and lake elevation (right axis)
 
 Then the Bibliometrix package was used to make the remaining plots of article data.
 
 ## Recommended Citation
-David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis
+David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. 
 ```{r Includes, echo=FALSE, results=FALSE, fig.width=13, fig.height=8, include=FALSE}
 # BibliometrixUrmia.r
 #
@@ -72,6 +76,12 @@ if (!require(RColorBrewer)) {
   install.packages("RColorBrewer",repos="http://cran.r-project.org") 
   library(RColorBrewer) # 
 }
+
+if (!require(pracma)) {  #interp1 and interpNA
+  install.packages("pracma", repos="http://cran.r-project.org") 
+  library(pracma) 
+}
+
 
 # Number of items to print
 lPrint <- 25
@@ -244,9 +254,9 @@ print(pArticleCount)
 
 \newpage
 
-## Figure for Section 4.7. Lake Restoration efforts: Lake level vs precipitation
+## Potential Figures for Section 4.7. Version 1 of Lake Restoration progress over time: Lake elevation (left axis) vs Precipitation (right axis)
 
-```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8, warning=FALSE}
+```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=3.5, warning=FALSE}
 
 
 ### Figure lake level vs precipitation plus ULRP plans
@@ -324,7 +334,7 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
   # Polygons for the different restoration phases
   geom_polygon(data = dfPolyAll, aes(x = Year, y = PrecipVal, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
   # Text label the phases
-  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cPrecipLims[1] + 50, label=Label), angle = 0, size = 7, hjust="middle") +
+  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cPrecipLims[1] + 50, label=Label), angle = 0, size = 4, hjust="middle") +
 
   #Precipitation converted to lake level
   geom_col(aes(y=-`precipitation (mm)`, fill="Precipitation"),  position = "identity", color = "black") +
@@ -336,7 +346,7 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
   
   #Horizontal line and text label for ecological target 1274.1
   geom_hline(yintercept = nEcologicalLevelAsPrecip, color="red", linetype = "longdash", size = 1.5) +
-  geom_text(aes(2007,nEcologicalLevelAsPrecip + 50, label="Ecological target"), color="red",size=6) +
+  geom_text(aes(2007,nEcologicalLevelAsPrecip + 50, label="Ecological target"), color="red",size=4) +
   
   #No x axis title
   labs(x="") +
@@ -345,7 +355,7 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
   #scale_y_continuous("Lake Level (m)", limits = c(1268,1278), breaks = seq(1268,1278, by=2), sec.axis = sec_axis(~ (. - cElevLimits[1])* cSlopePrecipToElev  + cPrecipLims[1], name = "Precipitation (mm)", breaks = seq(cPrecipLims[1],cPrecipLims[2], by=100))) +
   #All axis units are in negative precipition. We are labeling the left axis from Lake level low to high.
   #We are labeling the right axis from Large precip (bottom) to 0 (top)
-  scale_y_continuous("Lake Level (m)", breaks = seq(cPrecipLims[1],cPrecipLims[2], by=100), labels = seq(cElevLimits[1],cElevLimits[2],by=1) , sec.axis = sec_axis(~ . , name = "Precipitation\n(mm per year)", breaks = seq(cPrecipLims[1],cPrecipLims[2], by=100), labels = seq(-cPrecipLims[1],cPrecipLims[2], by=-100) )) +
+  scale_y_continuous("Lake Level (m)", breaks = seq(cPrecipLims[1],cPrecipLims[2], by=100), labels = seq(cElevLimits[1],cElevLimits[2],by=1) , sec.axis = sec_axis(~ . , name = "Precipitation\n(mm per year)", breaks = seq(-500,cPrecipLims[2], by=100), labels = seq(500,cPrecipLims[2], by=-100) )) +
   
   #Color the lines
   scale_color_manual(breaks=c("Observed", "Planned", "Without ULRP"), values=c("Black", "Blue", "Orange")) +
@@ -354,13 +364,237 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
   scale_fill_manual(breaks = c("Precipitation"), values=c(palPurples[2],palPurples[3],palPurples[4], palPurples[8]), labels = c("Precipitation")) +
   
   theme_bw() +
-  theme(text = element_text(size=20), legend.text=element_text(size=16),
-        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5),
+  theme(text = element_text(size=16), legend.text=element_text(size=12),
+        axis.text.x = element_text(size=14, angle=90,hjust=1.1,vjust=0.5),
         legend.title = element_blank(),
-        legend.position = c(0.85, 0.825),
+        legend.position = c(0.85, 0.80),
         legend.spacing.y = unit(-0.1, "cm"),
         #legend.margin = margin(-0.5,0,0,0, unit="cm"),
         legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+
+
+```
+
+## Version 2 of Lake restoration progress over time: Lake volume (left axis) vs precipitation (right axis)
+
+```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=3.5, warning=FALSE}
+
+
+### Second version of plot: Lake water volume (left axis) vs precipitation (right axis)
+### We will now do Lake water volume vs precipitation plot instead of levels.
+# Need to read in the lake bathymetry curve to convert elevations to volums
+# Use Sima (2021) bathymetry data
+
+sExcelFile <- 'Lake_Urmia_Data_1995-2015-Sima.xlsx'
+dfLakeBathymetry <- read_excel(sExcelFile, sheet = "LakeElevationVolume",  range = "A1:C113")
+
+# New function interpNA to return NAs for values outside interpolation range (from https://stackoverflow.com/questions/47295879/using-interp1-in-r)
+interpNA <- function(x, y, xi = x, ...) {
+  yi <- rep(NA, length(xi));
+  sel <- which(xi >= range(x)[1] & xi <= range(x)[2]);
+  yi[sel] <- interp1(x = x, y = y, xi = xi[sel], ...);
+  return(yi);
+}
+
+#Interpolate Volumes from elevations
+dfParsinejad$ActualVol <- interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = dfParsinejad$Actual)
+dfParsinejad$PlannedVol <- interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = dfParsinejad$Planned)
+dfParsinejad$WithoutVol <- interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = dfParsinejad$`Without the restoration plan`)
+nEcologicalLevelAsVol <- interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = 1274.1)
+
+#Interpolate Precipation from Volumes
+cVolLimits <- c(0,35) #Billion cubic meters
+cPrecipLims <- c(-1000,0) #Update for different scales
+
+# Calculate slope from Vol to Precipitation
+
+cSlopePrecipToVol <- (cPrecipLims[2] - cPrecipLims[1])/(cVolLimits[2] - cVolLimits[1]) #Slope
+cSlopeVolToPrecip <- 1 / cSlopePrecipToVol
+
+#Interpret precip from lake volumes
+dfParsinejad$ActualVolAsPrecip <- (dfParsinejad$ActualVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
+dfParsinejad$PlannedVolAsPrecip <- (dfParsinejad$PlannedVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
+dfParsinejad$WithoutVolAsPrecip <- (dfParsinejad$WithoutVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
+nEcologicalVolAsPrecip <- (nEcologicalLevelAsVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
+
+dfElevationTicks <- data.frame(Elevs = seq(1269,1279, by=1),
+                               Vols = interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = seq(1269,1279, by=1)))
+
+dfPolyAll$PrecipValForVol <- ifelse(dfPolyAll$PrecipVal == 0, 0, cPrecipLims[1] - 150)
+
+
+#Plot lake volume vs time on left axis, precipitation on right axis
+ggplot(data=dfParsinejad, aes(x=Year)) +
+  
+  # Polygons for the different restoration phases
+  geom_polygon(data = dfPolyAll, aes(x = Year, y = PrecipValForVol, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
+  # Text label the phases
+  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cPrecipLims[1] - 75, label=Label), angle = 0, size = 4, hjust="middle") +
+  
+  #Precipitation converted to lake level
+  geom_col(aes(y=-`precipitation (mm)`, fill="Precipitation"),  position = "identity", color = "black") +
+  
+  geom_line(aes(y=ActualVolAsPrecip, color="Observed", group=1), size=2) +
+  geom_line(aes(y=PlannedVolAsPrecip, color="Planned", group=1), linetype = "dashed", size=2) +
+  geom_line(aes(y=WithoutVolAsPrecip, color="Without ULRP", group=1), linetype = "dotdash", size=2) +
+  
+  scale_color_manual(breaks=c("Observed", "Planned", "Without ULRP"), values=c("Black", "Blue", "Orange")) +
+  
+  
+  #Horizontal line and text label for ecological target 1274.1
+  geom_hline(yintercept = nEcologicalVolAsPrecip, color="red", linetype = "longdash", size = 1.5) +
+  geom_text(aes(2007,nEcologicalVolAsPrecip + 50, label="Ecological target"), color="red",size=4) +
+  
+  #X-axis labels go from min year to max year in 5 year increments
+  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,5), minor_breaks = seq(minYear,maxYear,1)) +
+  #Y-axis left is volume, right is precipitation
+  #All axis units are in negative precipition. We are labeling the left axis from Lake level low to high.
+  #We are labeling the right axis from Large precip (bottom) to 0 (top)
+  #scale_y_continuous("Lake Volume (m)", breaks = seq(cPrecipLims[1],cPrecipLims[2], by=300)) +
+  scale_y_continuous("Lake Volume (m)", breaks = seq(cPrecipLims[1],cPrecipLims[2], by=300), labels = seq(cVolLimits[1],cVolLimits[2],by=10) , sec.axis = sec_axis(~ . , name = "Precipitation\n(mm per year)", breaks = seq(-500,cPrecipLims[2], by=100), labels = seq(500,cPrecipLims[2], by=-100) )) +
+  #Color the polygons and the precipitation bars
+  scale_fill_manual(breaks = c("Precipitation"), values=c(palPurples[2],palPurples[3],palPurples[4], palPurples[8]), labels = c("Precipitation")) +
+  
+  
+  labs(x="") + 
+  theme_bw() +
+  theme(text = element_text(size=16), legend.text=element_text(size=12),
+        axis.text.x = element_text(size=14, angle=90,hjust=1.1,vjust=0.5),
+        legend.title = element_blank(),
+        legend.position = c(0.85, 0.80),
+        legend.spacing.y = unit(-0.1, "cm"),
+        #legend.margin = margin(-0.5,0,0,0, unit="cm"),
+        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+
+```
+
+\newpage
+## Version 3 of Lake Restoration progress over time: Lake Volume (left axis) vs Lake Level (right axis)
+
+```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=4, warning=FALSE}
+
+minYear <- 1995
+#Elevation ticks without 1270
+dfElevationTicksWO1270 <- dfElevationTicks[c(1,3:nrow(dfElevationTicks)),]
+
+#Define y-axis values for polygons in volume BCM units
+dfPolyAll$Volume <- ifelse(dfPolyAll$PrecipVal == -1000,-3,35)
+
+#Plot Volume vs time with elevation on right axis
+ggplot(data=dfParsinejad, aes(x=Year)) +
+  
+  # Polygons for the different restoration phases
+  geom_polygon(data = dfPolyAll, aes(x = Year, y = Volume, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
+  # Text label the phases
+  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cVolLimits[1] - 1, label=Label), angle = 0, size = 5, hjust="middle") +
+  
+  
+  geom_line(aes(y=ActualVol, color="Observed", group=1), size=2) +
+  geom_line(aes(y=PlannedVol, color="Planned", group=1), linetype = "dashed", size=2) +
+  geom_line(aes(y=WithoutVol, color="Without ULRP", group=1), linetype = "dotdash", size=2) +
+  
+  scale_color_manual(breaks=c("Planned", "Observed", "Without ULRP"), values=c("Blue", "Black", "Orange")) +
+  
+  
+  #Horizontal line and text label for ecological target 1274.1
+  geom_hline(yintercept = nEcologicalLevelAsVol, color="red", linetype = "dotted", size = 1.5) +
+  geom_text(aes(2007,nEcologicalLevelAsVol + 1.75, label="Ecological target"), color="red",size=6) +
+  
+  #X-axis labels go from min year to max year in 5 year increments
+  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,5), minor_breaks = seq(minYear,maxYear,1)) +
+  #Y-axis left is volume, right is elevation
+  scale_y_continuous("Lake Volume (BCM)", sec.axis = sec_axis(~ . , name = "Water Level (m)", breaks = dfElevationTicksWO1270$Vols, labels = dfElevationTicksWO1270$Elevs )) +
+  
+  scale_fill_manual(values=c(palPurples[2],palPurples[3],palPurples[4])) +
+  
+  # guides(fill="none") +
+  labs(x="") + 
+  theme_bw() +
+  theme(text = element_text(size=21), legend.text=element_text(size=18),
+        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5),
+        legend.title = element_blank(),
+        legend.position = c(0.76, 0.78),
+        legend.spacing.y = unit(-0.1, "cm"),
+        #legend.margin = margin(-0.5,0,0,0, unit="cm"),
+        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+
+#Calculate recover metrics: Grab minimum and current years
+dfRecovery <- dfParsinejad %>% select(Year, Actual, ActualVol) %>% filter(Year == 2015 | Year == 2020)
+#Add Target
+dfRecovery <- rbind(dfRecovery, data.frame(Year = "Target", Actual = 1274.1, ActualVol = nEcologicalLevelAsVol))
+
+#Calculate percent of the way to goal from minimum
+nFractRecoverVol <- (dfRecovery$ActualVol[2] - dfRecovery$ActualVol[1])/(dfRecovery$ActualVol[3] - dfRecovery$ActualVol[1])*100
+nFractRecoverElev <- (dfRecovery$Actual[2] - dfRecovery$Actual[1])/(dfRecovery$Actual[3] - dfRecovery$Actual[1])*100
+
+sByVolume <- paste0("Percent recovery by volume: ",sprintf("%.1f", nFractRecoverVol ),"%", sep="")
+sByElev <- paste0("Percent recovery by elevation: ",sprintf("%.1f", nFractRecoverElev ),"%", sep="")
+
+```
+
+## Progress towards recovery targets (1274.1 m)
+
+`r sByVolume`
+\newline
+`r sByElev`
+
+\newpage
+## Lake Bathymetry curve: elevation vs volume
+
+```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8, warning=FALSE}
+
+#Plot the bathymetry relationship
+ggplot(data=dfLakeBathymetry, aes(x=`Volume (BCM)`,y=`Elevation(m)`)) +
+  geom_line() +
+  labs(x="Volume (BCM)", y="Elevation (m)") + 
+  theme_bw() +
+  theme(text = element_text(size=20), legend.position = "none",
+        axis.text.x = element_text(size=18))
+
+
+```
+
+\newpage
+
+## Counts of Articles that share data and collaborate
+
+```{r echo=FALSE,results='hide',fig.keep='all', fig.width=8, fig.height=8}
+
+### Figures to Show number of articles that share data and collaborate
+
+dfArticlesShare <- data.frame(Category = c("Share Data, Models,\nCode, Directions", "Connect Academics,\nStakeholders, Managers"),
+                              ArticleCount = c(1, 3))
+ 
+ggplot(data = dfArticlesShare) + 
+  #Histogram of publication counts
+  geom_col(colour = barlines,
+           position = "identity",
+           aes(x = Category, y = ArticleCount, fill=Category)) +
+  
+  #Line of lake levels
+  geom_hline(yintercept = nrow(dfArticleData), size=2, color="black") +
+  
+  geom_text(aes(x=2,y=nrow(dfArticleData) + 20, label="Articles Reviewed to Sep. 2020"), color="black",size=6) +
+  
+  scale_y_continuous(breaks = seq(0,575,by=100)) +
+  
+  #scale_x_discrete(breaks = c("Share Data, Models,\nCode, Directions", "Connect Academics,\nStakeholders, Managers"), labels = c("Share Data, Models,\nCode, Directions", "Connect Academics,\nStakeholders, Managers") ) +
+  
+  labs(x="", y="Lake Urmia Articles") +
+  
+  scale_fill_manual(values=c("red","blue")) +
+  
+  scale_color_manual(values=c(barlines,"black")) +
+  
+  theme_bw() +
+  theme(text = element_text(size=22), legend.text=element_text(size=15),
+        axis.text.x = element_text(size=20, angle=0,hjust=0.5,vjust=0),
+        legend.title = element_blank(),
+        legend.position = "none")
+  
 
 
 
