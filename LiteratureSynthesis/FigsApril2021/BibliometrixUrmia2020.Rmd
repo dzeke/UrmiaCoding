@@ -157,6 +157,9 @@ for (i in 2:1) {
 barlines <- "#1F3552" #Black outline
 cFills <- c('#6baed6', '#3182bd', '#08519c') #Fill colors for bars. Light blue, medium blue, dark blue
 
+palBlues <- brewer.pal(9,"Blues")
+cFills <- c(palBlues[5], palBlues[8])
+
 minYear <- min(dfArticleData$PY)
 minYear <- 1984
 maxYear <- max(dfArticleData$PY)
@@ -238,7 +241,7 @@ pArticleCount <- ggplot(data = dfArticleOrdered, aes(x = PY)) +
   
   theme_bw() +
   theme(text = element_text(size=20), legend.text=element_text(size=15),
-        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5),
+        axis.text.x = element_text(size=20, angle=90,hjust=1.1,vjust=0.5),
         legend.title = element_blank(),
         legend.position = c(0.15, 0.4),
         legend.spacing.y = unit(-0.1, "cm"),
