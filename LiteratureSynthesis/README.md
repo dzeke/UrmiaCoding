@@ -2,7 +2,18 @@
 
 The Scopus database was quried for articles with the key words  ( "Lake"  AND  ( "Urmia"  OR  "orumiyeh"  OR  "Orumiyeh" ) ). The quries were done in two batches: from 1) 1900 to August 2019, and 2) August 2019 to September 2020.
 
-The script generates the list of articles used in the literature synthesis and several figures, two of which are used in the synthesis article.
+The script generates the list of articles used in the literature synthesis and several figures, two of which are used in the synthesis article by Parsinejad et al (2021).
+
+## To Run Code and Generate Figures 1 and 7 in the article.
+1. Download and install R and RStudio. 
+1. Switch into the FigsApril2021 folder.
+1. Open the **FigsApril2021.Rproject** file BibliometrixUrmia
+1. Select the **BibliometrixUrmia2020.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tabl).
+1. The following files will be generated:
+  * **BibliometrixUrmia2020.pdf** - pdf file with all the figures
+  * **UrmiaArticlesSorted2020.csv** - Comma separated values of all articles sorted by number
+1. Open the **BibliometrixUrmia2020.pdf** file to view figures and other ouput. 
+
 
 ## Folder Contents
 1. FigsApril2021 - folder with most recent input data and code. Use these files!
@@ -25,21 +36,11 @@ The script generates the list of articles used in the literature synthesis and s
 1. Libraries - EndNote files with libraries used to generate paper citations
 1. OldStuff - Older versions of code files. May not run
 
-## To Run Code and Reproduce results
-1. Download and install R and RStudio. 
-1. Switch into the FigsApril2021 folder.
-1. Open the **FigsApril2021.Rproject** file
-
-### BibliometrixUrmia (Figures 1 and 7 and others)
-4. Select the **BibliometrixUrmia2020.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tabl).
-4. The following files will be generated:
-  * **BibliometrixUrmia2020.pdf** - pdf file with all the figures
-  * **UrmiaArticlesSorted2020.csv** - Comma separated values of all articles sorted by number
-6. Open the **BibliometrixUrmia2020.pdf** file to view figures and other ouput. 
-
-### FarmSizeDistribution
+## FarmSizeDistribution
 1. Select the **FarmSizeDistribution.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tabl).
 4. The following file will be generated: **FarmSizeDistribution.pdf**
 
 ## Recommended Citation
 David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis
+
+The active version of this code is maintained at: https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis
