@@ -19,32 +19,44 @@
 #
 
 #install.packages("openxlsx")
-install.packages("bibliometrix", repos=c("http://rstudio.org/_packages", "http://cran.rstudio.com"))
-install.packages("bibliometrix", dependencies = TRUE)
+#install.packages("bibliometrix", repos=c("http://rstudio.org/_packages", "http://cran.rstudio.com"))
+#install.packages("bibliometrix", dependencies = TRUE)
 
-if (!require(readxl)) { 
-  install.packages("readxl", repos="http://cran.r-project.org") 
-  library(readxl) 
-}
+# if (!require(bibliometrix)) {  #interp1 and interpNA
+#   install.packages("bibliometrix", repos="http://cran.r-project.org", type = "binary") 
+#   library(bibliometrix) 
+# }
 
-if (!require(RColorBrewer)) { 
-  install.packages("RColorBrewer",repos="http://cran.r-project.org") 
-  library(RColorBrewer) # 
-}
+if (!require("pacman")) install.packages("pacman")
+#Use the pacman library to load all missing packages
+pacman::p_load(bibliometrix, ggplot2, dplyr, lubridate, plyr, data.table, stringr, readxl, RColorBrewer, pracma, cowplot)
 
-library(bibliometrix)   ### load bibliometrix package
-library(ggplot2)
-library(dplyr)
-library(lubridate)
-library(plyr)
-library(data.table)
-library(stringr)
-library(reshape)  #melt
 
-if (!require(pracma)) {  #interp1 and interpNA
-  install.packages("pracma", repos="http://cran.r-project.org") 
-  library(pracma) 
-}
+# if (!require(readxl)) { 
+#   install.packages("readxl", repos="http://cran.r-project.org") 
+#   library(readxl) 
+# }
+# 
+# if (!require(RColorBrewer)) { 
+#   install.packages("RColorBrewer",repos="http://cran.r-project.org") 
+#   library(RColorBrewer) # 
+# }
+# 
+# 
+# #library(bibliometrix)   ### load bibliometrix package
+# library(ggplot2)
+# library(dplyr)
+# library(lubridate)
+# library(plyr)
+# library(data.table)
+# library(stringr)
+# library(reshape)  #melt
+# library(cowplot) #for multi-plots
+# 
+# if (!require(pracma)) {  #interp1 and interpNA
+#   install.packages("pracma", repos="http://cran.r-project.org") 
+#   library(pracma) 
+# }
 
 
 # Number of items to print
@@ -413,11 +425,12 @@ dfParsinejad$PlannedVolAsPrecip <- (dfParsinejad$PlannedVol - cVolLimits[1])/cSl
 dfParsinejad$WithoutVolAsPrecip <- (dfParsinejad$WithoutVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
 nEcologicalVolAsPrecip <- (nEcologicalLevelAsVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
 
-
-
-dfElevationTicks <- data.frame(Elevs = seq(1269,1279, by=1),
-                               Vols = interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = seq(1269,1279, by=1)))
-
+#Create the elevation-> volume relationship from data
+nLargestElevation <- 1278
+dfElevationTicks <- data.frame(Elevs = seq(1269,nLargestElevation, by=1),
+                               Vols = interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = seq(1269,nLargestElevation, by=1)))
+#Adjust for the last tick
+dfElevationTicks$Vols[nrow(dfElevationTicks)] <- interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = nLargestElevation - 0.0001)
 
 #Plot Volume vs time with elevation on right axis
 ggplot(data=dfParsinejad, aes(x=Year)) +
@@ -442,7 +455,7 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
   theme(text = element_text(size=20), legend.text=element_text(size=16),
         axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5),
         legend.title = element_blank(),
-        legend.position = c(0.85, 0.825),
+        legend.position = c(0.85, 0.8),
         legend.spacing.y = unit(-0.1, "cm"),
         #legend.margin = margin(-0.5,0,0,0, unit="cm"),
         legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
@@ -452,13 +465,16 @@ dfPolyAll$PrecipValForVol <- ifelse(dfPolyAll$PrecipVal == 0, 0, cPrecipLims[1] 
 #Define y-axis values for polygons in volume BCM units
 dfPolyAll$Volume <- ifelse(dfPolyAll$PrecipVal == -1000,-3,35)
 
-#Plot Volume vs time with elevation on right axis
-ggplot(data=dfParsinejad, aes(x=Year)) +
+#Remove the 1270 tick because it crowds
+dfElevationTicksWO1270 <- dfElevationTicks %>% filter(Elevs != 1270)
+
+#Plot Volume vs time with elevation on right axis and filled polygons for the different phases
+pVolume <- ggplot(data=dfParsinejad, aes(x=Year)) +
   
   # Polygons for the different restoration phases
   geom_polygon(data = dfPolyAll, aes(x = Year, y = Volume, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
   # Text label the phases
-  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cVolLimits[1] - 1, label=Label), angle = 0, size = 6, hjust="middle") +
+  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cVolLimits[1] - 1, label=Label), angle = 0, size = 5, hjust="middle") +
   
   
   geom_line(aes(y=ActualVol, color="Observed", group=1), size=2) +
@@ -470,12 +486,12 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
   
   #Horizontal line and text label for ecological target 1274.1
   geom_hline(yintercept = nEcologicalLevelAsVol, color="red", linetype = "dotted", size = 1.5) +
-  geom_text(aes(2007,nEcologicalLevelAsVol + 1.75, label="Ecological target"), color="red",size=6) +
+  geom_text(aes(2007,nEcologicalLevelAsVol + 1.75, label="Ecological target"), color="red",size=5) +
   
   #X-axis labels go from min year to max year in 5 year increments
   scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,5), minor_breaks = seq(minYear,maxYear,1)) +
   #Y-axis left is volume, right is elevation
-  scale_y_continuous("Lake Volume (BCM)", sec.axis = sec_axis(~ . , name = "Water Level (m)", breaks = dfElevationTicksWO1270$Vols, labels = dfElevationTicksWO1270$Elevs )) +
+  scale_y_continuous("Lake Volume\n(BCM)", sec.axis = sec_axis(~ . , name = "Water Level (m)", breaks = dfElevationTicksWO1270$Vols, labels = dfElevationTicksWO1270$Elevs )) +
   
   scale_fill_manual(values=c(palPurples[2],palPurples[3],palPurples[4])) +
   
@@ -483,14 +499,46 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
   labs(x="") + 
   theme_bw() +
   theme(text = element_text(size=21), legend.text=element_text(size=18),
-        axis.text.x = element_text(size=18, angle=90,hjust=1.1,vjust=0.5),
+        axis.text.x = element_text(size=18, angle=0),
         legend.title = element_blank(),
-        legend.position = c(0.84, 0.825),
+        legend.position = c(0.84, 0.775),
         legend.spacing.y = unit(-0.1, "cm"),
         #legend.margin = margin(-0.5,0,0,0, unit="cm"),
         legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
 
+#Lower bound on precipitation to plot
+nBottomPrecip <- 600
 
+#Second plot with precipitation bars pointing down
+pPrecip <- ggplot(data=dfParsinejad, aes(x=Year)) +
+  
+  # Polygons for the different restoration phases
+  geom_polygon(data = dfPolyAll, aes(x = Year, y = PrecipValForVol/2, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
+  # Text label the phases
+  #geom_text(data = dfPolyLabel, aes(x=MidYear, y=-nBottomPrecip - 75, label=Label), angle = 0, size = 7, hjust="middle") +
+  
+  #Precipitation converted to lake level
+  geom_col(aes(y=-`precipitation (mm)`, fill="Precipitation"),  position = "identity", color = "black") +
+  
+   #X-axis labels go from min year to max year in 5 year increments
+  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,by=5) , minor_breaks = seq(minYear,maxYear,1)) +
+  #Label the left y as precipation
+  scale_y_continuous("Precipitation\n(mm)", limits = c(-nBottomPrecip, cPrecipLims[2]), breaks = seq(-nBottomPrecip,cPrecipLims[2], by=100), labels =  c("",seq(nBottomPrecip-100,cPrecipLims[2], by=-100)) ) +
+  #Color the polygons and the precipitation bars
+  scale_fill_manual(breaks = c("Precipitation"), values=c(palPurples[2],palPurples[3],palPurples[4], palPurples[8]), labels = c("Precipitation")) +
+  
+  
+  labs(x="") + 
+  theme_bw() +
+  theme(text = element_text(size=20), legend.text=element_text(size=16),
+        axis.text.x = element_text(size=18, angle=0),
+        legend.position = "none",
+        legend.spacing.y = unit(-0.1, "cm"),
+        #legend.margin = margin(-0.5,0,0,0, unit="cm"),
+        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+#Make a combined plot of precipatation (top) and Lake Volume (bottom)
+plot_grid(pPrecip, pVolume, align="v", axis="b", nrow=2, ncol=1)
 
 
 # OLD - Plot lake volume vs time on left axis, precipitation on right axis
@@ -644,7 +692,7 @@ dfNumAuthors$CumSum <- cumsum(dfNumAuthors$V1)
 dfNumAuthors$CumSumRev <- max(dfNumAuthors$CumSum) - dfNumAuthors$CumSum
 
 ## Construct a two panel plot of the article counts and author histogram
-library(cowplot)
+
 plot_grid(pArticleCount, pAuthorHist, labels = c('A', 'B'), label_size = 16)
 
 ggsave("ArticleCounts.png", width=11, height = 6)

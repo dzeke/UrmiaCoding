@@ -1,7 +1,7 @@
 ---
 title: "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020"
 author: "David E. Rosenberg"
-date: "April 8, 2021"
+date: "September 11, 2021"
 output:
   pdf_document: default
   html_document: default
@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 This is an R Markdown document. The script is modified from https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
 
 The Scopus database was quried for articles with the key words  ( "Lake"  AND  ( "Urmia"  OR  "orumiyeh"  OR  "Orumiyeh" ) ). The quries were done in two batches: from 1) 1900 to August 2019, and 2) August 2019 to September 2020. Duplicates were removed.
+
+This script generates multiple visuals of the article dataset (see descriptions below). Figures 1 and Figure 2 (version 4) in this file become Figures 1 and 6 in the Synthesis article.
 
 ## Input files:
  
@@ -33,14 +35,15 @@ The Scopus database was quried for articles with the key words  ( "Lake"  AND  (
 #Outputs
 
  1. Plot of articles versus time compared to lake level (Fig. 1 in the synthesis article)
- 2. Plot of lake restoration progress over time (Figure 6 in Secton 4.7 of the synthesis article). Three different versions:
+ 2. Plot of lake restoration progress over time (Figure 6 in Secton 4.7 of the synthesis article). Four different versions:
     a. Lake Level (left axis) and precipitation (right axis)
     b. Lake volume (left axis)
     c. Lake volume (left axis) and lake elevation (right axis)
-
+    d. Precipitation on top panel and Lake Volume on bottom panel
+    
 Then the Bibliometrix package was used to make the remaining plots of article data.
 
-## Recommended Citation
+## Requested Citation
 David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. 
 ```{r Includes, echo=FALSE, results=FALSE, fig.width=13, fig.height=8, include=FALSE}
 # BibliometrixUrmia.r
@@ -59,28 +62,41 @@ David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed 
 # david.rosenberg@usu.edu
 #
 
-library(bibliometrix)   ### load bibliometrix package
-library(ggplot2)
-library(dplyr)
-library(lubridate)
-library(plyr)
-library(data.table)
-library(stringr)
+#install.packages("bibliometrix", repos="http://cran.r-project.org", type = "binary") 
+#library(bibliometrix)
 
-if (!require(readxl)) { 
-  install.packages("readxl", repos="http://cran.r-project.org") 
-  library(readxl) 
-}
+# if (!require(bibliometrix)) { 
+#   install.packages("bibliometrix", repos="http://cran.r-project.org", type = "binary") 
+#   library(bibliometrix) 
+# }
 
-if (!require(RColorBrewer)) { 
-  install.packages("RColorBrewer",repos="http://cran.r-project.org") 
-  library(RColorBrewer) # 
-}
+#Use pacman library to load all missing packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(bibliometrix, ggplot2, dplyr, lubridate, plyr, data.table, stringr, readxl, RColorBrewer, pracma, cowplot)
 
-if (!require(pracma)) {  #interp1 and interpNA
-  install.packages("pracma", repos="http://cran.r-project.org") 
-  library(pracma) 
-}
+
+# #library(bibliometrix)   ### load bibliometrix package
+# library(ggplot2)
+# library(dplyr)
+# library(lubridate)
+# library(plyr)
+# library(data.table)
+# library(stringr)
+# 
+# if (!require(readxl)) { 
+#   install.packages("readxl", repos="http://cran.r-project.org") 
+#   library(readxl) 
+# }
+# 
+# if (!require(RColorBrewer)) { 
+#   install.packages("RColorBrewer",repos="http://cran.r-project.org") 
+#   library(RColorBrewer) # 
+# }
+# 
+# if (!require(pracma)) {  #interp1 and interpNA
+#   install.packages("pracma", repos="http://cran.r-project.org") 
+#   library(pracma) 
+# }
 
 
 # Number of items to print
@@ -257,7 +273,9 @@ print(pArticleCount)
 
 \newpage
 
-## Potential Figures for Section 4.7. Version 1 of Lake Restoration progress over time: Lake elevation (left axis) vs Precipitation (right axis)
+## Figure 2. Lake Restoration progress over time.
+
+## Version 1. Lake elevation (left axis) vs Precipitation (right axis)
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=3.5, warning=FALSE}
 
@@ -379,7 +397,7 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
 
 ```
 
-## Version 2 of Lake restoration progress over time: Lake volume (left axis) vs precipitation (right axis)
+## Version 2. Lake restoration progress over time: Lake volume (left axis) vs precipitation (right axis)
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=3.5, warning=FALSE}
 
@@ -390,7 +408,7 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
 # Use Sima (2021) bathymetry data
 
 sExcelFile <- 'Lake_Urmia_Data_1995-2015-Sima.xlsx'
-dfLakeBathymetry <- read_excel(sExcelFile, sheet = "LakeElevationVolume",  range = "A1:C113")
+dfLakeBathymetry <- read_excel(sExcelFile, sheet = "LakeElevationVolume",  range = "A1:C112")
 
 # New function interpNA to return NAs for values outside interpolation range (from https://stackoverflow.com/questions/47295879/using-interp1-in-r)
 interpNA <- function(x, y, xi = x, ...) {
@@ -421,8 +439,13 @@ dfParsinejad$PlannedVolAsPrecip <- (dfParsinejad$PlannedVol - cVolLimits[1])/cSl
 dfParsinejad$WithoutVolAsPrecip <- (dfParsinejad$WithoutVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
 nEcologicalVolAsPrecip <- (nEcologicalLevelAsVol - cVolLimits[1])/cSlopeVolToPrecip + cPrecipLims[1]
 
-dfElevationTicks <- data.frame(Elevs = seq(1269,1279, by=1),
-                               Vols = interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = seq(1269,1279, by=1)))
+#Create the elevation-> volume relationship from data
+nLargestElevation <- 1278
+dfElevationTicks <- data.frame(Elevs = seq(1269,nLargestElevation, by=1),
+                               Vols = interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = seq(1269,nLargestElevation, by=1)))
+#Adjust for the last tick
+dfElevationTicks$Vols[nrow(dfElevationTicks)] <- interpNA(x=dfLakeBathymetry$`Elevation(m)`,y=dfLakeBathymetry$`Volume (BCM)`,xi = nLargestElevation - 0.0001)
+
 
 dfPolyAll$PrecipValForVol <- ifelse(dfPolyAll$PrecipVal == 0, 0, cPrecipLims[1] - 150)
 
@@ -474,7 +497,7 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
 ```
 
 \newpage
-## Version 3 of Lake Restoration progress over time: Lake Volume (left axis) vs Lake Level (right axis)
+## Version 3. Lake Restoration progress over time: Lake Volume (left axis) vs Lake Level (right axis)
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=4, warning=FALSE}
 
@@ -522,6 +545,90 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
         legend.spacing.y = unit(-0.1, "cm"),
         #legend.margin = margin(-0.5,0,0,0, unit="cm"),
         legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+
+```
+
+\newpage
+## Version 4. Lake Restoration progress over time: Precipitation (top), Lake Volume and Lake Level (bottom)
+
+```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=7, warning=FALSE}
+
+#Remove the 1270 tick because it crowds
+dfElevationTicksWO1270 <- dfElevationTicks %>% filter(Elevs != 1270)
+
+#Plot Volume vs time with elevation on right axis and filled polygons for the different phases
+pVolume <- ggplot(data=dfParsinejad, aes(x=Year)) +
+  
+  # Polygons for the different restoration phases
+  geom_polygon(data = dfPolyAll, aes(x = Year, y = Volume, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
+  # Text label the phases
+  geom_text(data = dfPolyLabel, aes(x=MidYear, y=cVolLimits[1] - 1, label=Label), angle = 0, size = 5, hjust="middle") +
+  
+  
+  geom_line(aes(y=ActualVol, color="Observed", group=1), size=2) +
+  geom_line(aes(y=PlannedVol, color="Planned", group=1), linetype = "dashed", size=2) +
+  geom_line(aes(y=WithoutVol, color="Without ULRP", group=1), linetype = "dotdash", size=2) +
+  
+  scale_color_manual(breaks=c("Planned", "Observed", "Without ULRP"), values=c("Blue", "Black", "Orange")) +
+  
+  
+  #Horizontal line and text label for ecological target 1274.1
+  geom_hline(yintercept = nEcologicalLevelAsVol, color="red", linetype = "dotted", size = 1.5) +
+  geom_text(aes(2007,nEcologicalLevelAsVol + 1.75, label="Ecological target"), color="red",size=5) +
+  
+  #X-axis labels go from min year to max year in 5 year increments
+  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,5), minor_breaks = seq(minYear,maxYear,1)) +
+  #Y-axis left is volume, right is elevation
+  scale_y_continuous("Lake Volume\n(BCM)", sec.axis = sec_axis(~ . , name = "Water Level (m)", breaks = dfElevationTicksWO1270$Vols, labels = dfElevationTicksWO1270$Elevs )) +
+  
+  scale_fill_manual(values=c(palPurples[2],palPurples[3],palPurples[4])) +
+  
+  # guides(fill="none") +
+  labs(x="") + 
+  theme_bw() +
+  theme(text = element_text(size=21), legend.text=element_text(size=16),
+        axis.text.x = element_text(size=18, angle=0),
+        legend.title = element_blank(),
+        legend.position = c(0.76, 0.775),
+        legend.spacing.y = unit(-0.1, "cm"),
+        #legend.margin = margin(-0.5,0,0,0, unit="cm"),
+        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+#Lower bound on precipitation to plot
+nBottomPrecip <- 600
+
+#Second plot with precipitation bars pointing down
+pPrecip <- ggplot(data=dfParsinejad, aes(x=Year)) +
+  
+  # Polygons for the different restoration phases
+  geom_polygon(data = dfPolyAll, aes(x = Year, y = PrecipValForVol/2, group = id, fill = as.factor(dfPolyAll$DumVal)), show.legend = F) +
+  # Text label the phases
+  #geom_text(data = dfPolyLabel, aes(x=MidYear, y=-nBottomPrecip - 75, label=Label), angle = 0, size = 7, hjust="middle") +
+  
+  #Precipitation converted to lake level
+  geom_col(aes(y=-`precipitation (mm)`, fill="Precipitation"),  position = "identity", color = "black") +
+  
+   #X-axis labels go from min year to max year in 5 year increments
+  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,by=5) , minor_breaks = seq(minYear,maxYear,1)) +
+  #Label the left y as precipation
+  scale_y_continuous("Precipitation\n(mm)", limits = c(-nBottomPrecip, cPrecipLims[2]), breaks = seq(-nBottomPrecip,cPrecipLims[2], by=100), labels =  c("",seq(nBottomPrecip-100,cPrecipLims[2], by=-100)) ) +
+  #Color the polygons and the precipitation bars
+ scale_fill_manual(values=c(palPurples[2],palPurples[3],palPurples[4], palPurples[8])) +
+  
+  
+  labs(x="") + 
+  theme_bw() +
+  theme(text = element_text(size=20), legend.text=element_text(size=16),
+        axis.text.x = element_text(size=18, angle=0),
+        legend.position = "none",
+        legend.spacing.y = unit(-0.1, "cm"),
+        #legend.margin = margin(-0.5,0,0,0, unit="cm"),
+        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+
+#Make a combined plot of precipatation (top) and Lake Volume (bottom)
+plot_grid(pPrecip, pVolume, align="v", axis="b", nrow=2, ncol=1)
+
 
 
 #Calculate recover metrics: Grab minimum and current years

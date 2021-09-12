@@ -4,11 +4,17 @@ The Scopus database was quried for articles with the key words  ( "Lake"  AND  (
 
 The script generates the list of articles used in the literature synthesis and several figures, two of which are used in the synthesis article by Parsinejad et al (2021).
 
+Find further documentation in the file **FigsApril2021\BibliometrixUrmia2020.pdf**.
+
+## Requirements
+* R version 4.1.1. Download from https://cran.r-project.org/.
+* R Studio 1.1.456. Download from https://www.rstudio.com/.
+
 ## To Run Code and Generate Figures 1 and 7 in the article.
-1. Download and install R and RStudio. 
-1. Switch into the FigsApril2021 folder.
-1. Open the **FigsApril2021.Rproject** file BibliometrixUrmia
-1. Select the **BibliometrixUrmia2020.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tabl).
+1. Download and install R and RStudio (see requirements). 
+1. Switch into the **FigsApril2021** folder.
+1. Open the **FigsApril2021.Rproject**. R Studio will open.
+1. Select the **BibliometrixUrmia2020.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tab).
 1. The following files will be generated:
   * **BibliometrixUrmia2020.pdf** - pdf file with all the figures
   * **UrmiaArticlesSorted2020.csv** - Comma separated values of all articles sorted by number
@@ -18,7 +24,7 @@ The script generates the list of articles used in the literature synthesis and s
 ## Folder Contents
 1. FigsApril2021 - folder with most recent input data and code. Use these files!
 
-    * **Files for Figures 1 and 7**
+    * **Files for Figures 1 and 6**
     * **Scopus-LakeUrmia-Aug8-2019.bib** - Scopus database query made on August 8, 2019 (initial batch of articles)
     * **Scopus-LakeUrmia-Sep15-2020.bib** - Scopus database query made on Sept 15, 2020 (2nd batch of articles)
     * **LakeUrmiaWaterLevel-1966-Vaheddost.xlsx** - Monthly lake level data provided by Vaheddost via email. Used in Figure 1.
@@ -40,7 +46,7 @@ The script generates the list of articles used in the literature synthesis and s
 1. Select the **FarmSizeDistribution.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tabl).
 4. The following file will be generated: **FarmSizeDistribution.pdf**
 
-## Recommended Citation
-David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis
+## Requested Citation
+David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis.
 
-The active version of this code is maintained at: https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis
+The active version of this code is maintained at: https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis.

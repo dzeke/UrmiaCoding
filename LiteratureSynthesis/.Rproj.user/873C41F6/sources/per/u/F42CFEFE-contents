@@ -1,0 +1,6 @@
+## Test of bibliometrix
+
+if (!require(bibliometrix)) { 
+  install.packages("bibliometrix",repos="http://cran.r-project.org", type="binary") 
+  library(bibliometrix) # 
+}
