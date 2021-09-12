@@ -1,4 +1,4 @@
-# UrmiaCoding
+# Urmia Coding
  Lake Urmia coding efforts big and small.
  
 ## Directions
