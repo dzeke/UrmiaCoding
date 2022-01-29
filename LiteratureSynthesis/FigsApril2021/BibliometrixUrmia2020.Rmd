@@ -248,8 +248,8 @@ pArticleCount <- ggplot(data = dfArticleOrdered, aes(x = PY)) +
   geom_line(data=dfLakeLevelsVah, aes(x=YearMonth, y=LevelAsArticle, color="Level"), size=2) +
   
   labs(x="") +
-  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,2), minor_breaks = seq(minYear,maxYear,1)) +
-  scale_y_continuous("Articles\n(number per year)",sec.axis = sec_axis(~ (. - cLeftLims[1])* cSlope  + cRightLims[1], name = "Lake Level (m)", breaks = seq(cRightLims[1],cRightLims[2],by=2)) ) +
+  scale_x_continuous(limits = c(minYear,maxYear), breaks = seq(minYear,maxYear,2), minor_breaks = seq(minYear,maxYear,2) ) +
+  scale_y_continuous(breaks = seq(0,80, by=10), minor_breaks = seq(0,80, by=10), "Articles\n(number per year)",sec.axis = sec_axis(~ (. - cLeftLims[1])* cSlope  + cRightLims[1], name = "Lake Level (m)", breaks = seq(cRightLims[1],cRightLims[2],by=2)) ) +
   
   scale_fill_manual(values=cFills, name="", labels=cPeriods) +
   
@@ -262,7 +262,9 @@ pArticleCount <- ggplot(data = dfArticleOrdered, aes(x = PY)) +
         legend.position = c(0.15, 0.4),
         legend.spacing.y = unit(-0.1, "cm"),
         #legend.margin = margin(-0.5,0,0,0, unit="cm"),
-        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid")) # +
+        legend.box.background = element_rect(color="black",size=1, fill="White", linetype="solid"),
+        panel.grid.major=element_line(colour="grey99"),
+        panel.grid.minor=element_line(colour="grey99")) # +
 #legend.background = element_rect(fill="White",
 #                                size=0.5, linetype="solid", 
 #                               colour ="black")) #,angle=90,

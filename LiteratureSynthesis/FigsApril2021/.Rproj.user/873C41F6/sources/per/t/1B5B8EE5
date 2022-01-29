@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1631400961351.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "1B5B8EE5",
+    "lastKnownWriteTime" : 8728024947615947040,
+    "last_content_update" : 1631400961351,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "E2012F4D",
+        "caption" : "dfPolyAll",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=dfPolyAll&cache_key=E2012F4D",
+        "displayedObservations" : "12",
+        "environment" : "",
+        "object" : "dfPolyAll",
+        "preview" : "0",
+        "totalObservations" : "12",
+        "variables" : "11"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
