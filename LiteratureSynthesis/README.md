@@ -7,7 +7,7 @@
 1. **OldStuff** - Old stuff no longer used.
 
 ## Directions to Run
-1. Switch into the **[FigsFeb2022](https://github.com/dzeke/UrmiaCoding/raw/main/LiteratureSynthesis/FigsApril2022)** Folder.
+1. Switch into the **[FigsFeb2022](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis/FigsFeb2022)** Folder.
 1. Open a subfolder for a Figure.
 1. For example, open a subfolder for Figures 1, 4, 9, or 12. Then open the Excel file in the subfolder.
 1. Figures 3 and 7 were generated in R Studio. To run, see further directions **To Run Code and Generate Figures 3 and 7** below.
@@ -19,7 +19,7 @@
 ### To Run Code and Generate Figures 3 and 7.
 1. Download and install R and RStudio (see requirements). 
 1. Switch into the **Figure3and7-ArticleCountsLakeLevel** folder.
-1, Open the file **FigsFeb2022\BibliometrixUrmia2020.pdf**. This markdown document explains how the figures were generated and also shows the results.
+1. Open the file **[BibliometrixUrmia2020.pdf](https://github.com/dzeke/UrmiaCoding/blob/main/LiteratureSynthesis/FigsFeb2022/Figure3and7-ArticleCountsLakeLevel/BibliometrixUrmia2020.pdf)**. This markdown document explains how the figures were generated and also shows the results.
 1. To generate the results in **BibliometrixUrmia2020.pdf**, open the file **FigsApril2021.Rproject**. R Studio will open.
 1. Select the **BibliometrixUrmia2020.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tab).
 1. The following files will be generated:
