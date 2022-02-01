@@ -1,0 +1,1 @@
+{"frames":[{"character_number":3,"end_character_number":23,"end_line_number":3,"file":"","func":"library(bibliometrix)","line_number":3},{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"stop(txt, domain = NA)","line_number":0}],"message":"Error in library(bibliometrix) : \n  there is no package called ‘bibliometrix’\n"}
