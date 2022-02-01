@@ -2,7 +2,7 @@
 
 ##Contents
 1. **[FigsFeb2022](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis/FigsFeb2022)** - Data and code to produce all figures in the manuscript. See further instructions below.
-    1. **[LakeUrmiaSynthesis-Figures-v6.pptx](https://github.com/dzeke/UrmiaCoding/raw/main/LiteratureSynthesis/FigsApril2022/LakeUrmiaSynthesis-Figures-v6.pptx) - Powerpoint file with final versions of all figures..
+    1. **[LakeUrmiaSynthesis-Figures-v6.pptx](https://github.com/dzeke/UrmiaCoding/raw/main/LiteratureSynthesis/FigsFeb2022/LakeUrmiaSynthesis-Figures-v6.pptx) - Powerpoint file with final versions of all figures..
 1. **[Libraries](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis/Libraries)** - EndNote and XML files used to track articles reviewed and included in the synthesis.
 1. **OldStuff** - Old stuff no longer used.
 
