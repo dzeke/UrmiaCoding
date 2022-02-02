@@ -9,7 +9,7 @@ into the folder **LiteratureSynthesis** and open the file **[README.md](https://
 
 ## Contents
 
-1. LiteratureSynthesis - data and code and figures in support of the synthesis of 544 Lake Urmia articles. Parsinejad et al (2021) "40-Years of Lake Urmia Restoration Research: Review, Synthesis, and Next Steps"
+1. LiteratureSynthesis - data and code and figures in support of the synthesis of 544 Lake Urmia articles. Parsinejad et al (2021) "[40-Years of Lake Urmia Restoration Research: Review, Synthesis, and Next Steps](https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1001&context=lake_urmi)a"
 
 ## Requested Citation
 David E. Rosenberg (2022). "Urmia Coding". Utah State University. Logan, Utah. https://github.com/dzeke/UrmiaCoding
