@@ -8,7 +8,7 @@
 
 ## Directions
 
-1. Switch into the folder **LiteratureSynthesis** and open the file **[README.md](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis)**.
+1. Switch into the **LiteratureSynthesis** folder and open the file **[README.md](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis)**.
 
 
 ## Requested Citation
