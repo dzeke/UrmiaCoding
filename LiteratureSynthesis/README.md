@@ -20,7 +20,7 @@ in Support of Parsinejad et al (2022) "[40-Years of Lake Urmia Restoration Resea
 ### To Run Code and Generate Figures 3 and 7.
 1. Download and install R and RStudio (see requirements). 
 1. Switch into the **[Figure3and7-ArticleCountsLakeLevel](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis/FigsFeb2022/Figure3and7-ArticleCountsLakeLevel)** folder.
-1. Open the file **[BibliometrixUrmia2020.pdf](https://github.com/dzeke/UrmiaCoding/blob/main/LiteratureSynthesis/FigsFeb2022/Figure3and7-ArticleCountsLakeLevel/BibliometrixUrmia2020.pdf)**. This markdown document explains how Figures 3 and 7 were generated and also shows the results.
+1. Open the file **[BibliometrixUrmia2020.pdf](https://github.com/dzeke/UrmiaCoding/blob/main/LiteratureSynthesis/FigsFeb2022/Figure3and7-ArticleCountsLakeLevel/BibliometrixUrmia2020.pdf)**. This markdown document explains how Figures 3 and 7 were generated and also shows the results. It also shows other figures that are not used in the review.
 1. To generate the results in **BibliometrixUrmia2020.pdf**, open the file **FigsApril2021.Rproject**. R Studio will open.
 1. Select the **BibliometrixUrmia2020.Rmd** file tab (R markdown file). Click the **Knit** button (below the file tab).
 1. The following files will be generated:
