@@ -1,8 +1,9 @@
-# Data, Model, and Code in Support of Parsinejad et al (2022) "40-Years of Lake Urmia Restoration Research: Review, Synthesis and Next Steps"
+# Data, Model, and Code
+in Support of Parsinejad et al (2022) "[40-Years of Lake Urmia Restoration Research: Review, Synthesis and Next Steps](https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1001&context=lake_urmia)."
 
-##Contents
+## Contents
 1. **[FigsFeb2022](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis/FigsFeb2022)** - Data and code to produce all figures in the manuscript. See further instructions below.
-    1. **[LakeUrmiaSynthesis-Figures-v6.pptx](https://github.com/dzeke/UrmiaCoding/raw/main/LiteratureSynthesis/FigsFeb2022/LakeUrmiaSynthesis-Figures-v6.pptx)** - Powerpoint file with final versions of all figures..
+    1. **[LakeUrmiaSynthesis-Figures-v6.pptx](https://github.com/dzeke/UrmiaCoding/raw/main/LiteratureSynthesis/FigsFeb2022/LakeUrmiaSynthesis-Figures-v6.pptx)** - Powerpoint file with final versions of all figures.
 1. **[Libraries](https://github.com/dzeke/UrmiaCoding/tree/main/LiteratureSynthesis/Libraries)** - EndNote and XML files used to track articles reviewed and included in the synthesis.
 1. **OldStuff** - Old stuff no longer used.
 
