@@ -1,7 +1,7 @@
 ---
 title: "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020"
 author: "David E. Rosenberg"
-date: "September 11, 2021"
+date: "February 1, 2022"
 output:
   pdf_document: default
   html_document: default
@@ -13,11 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This is an R Markdown document. The script is modified from https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
+This is an R Markdown document. The script is modified from [Bibliometrix Package](cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html). This script generates Figures 3 and 7 in the review and synthesis article by [Parsinejad et al (2022)](digitalcommons.usu.edu/cgi/viewcontent.cgi?article=1001&context=lake_urmia).
 
 The Scopus database was quried for articles with the key words  ( "Lake"  AND  ( "Urmia"  OR  "orumiyeh"  OR  "Orumiyeh" ) ). The quries were done in two batches: from 1) 1900 to August 2019, and 2) August 2019 to September 2020. Duplicates were removed.
 
-This script generates multiple visuals of the article dataset (see descriptions below). Figures 1 and Figure 2 (version 4) in this file become Figures 1 and 6 in the Synthesis article.
+This script also uses the Bibliometrix package to generate Figures A, B, C, ... K which are multiple visuals of the article dataset (see descriptions below).
 
 ## Input files:
  
@@ -32,16 +32,24 @@ This script generates multiple visuals of the article dataset (see descriptions 
  1. **BibliometrixUrmia2020.pdf** - pdf file with all the figures
  2. **UrmiaArticlesSorted2020.csv** - Comma separated values of all articles sorted by number of authros (largest to smallest)
 
-#Outputs
+## Outputs
 
- 1. Plot of articles versus time compared to lake level (Fig. 1 in the synthesis article)
- 2. Plot of lake restoration progress over time (Figure 6 in Secton 4.7 of the synthesis article). Four different versions:
-    a. Lake Level (left axis) and precipitation (right axis)
-    b. Lake volume (left axis)
-    c. Lake volume (left axis) and lake elevation (right axis)
-    d. Precipitation on top panel and Lake Volume on bottom panel
+### Plots that appear in the review article.
+
+Figure 3. Articles versus time compared to lake level.
+
+Figure 7. Lake restoration progress over time with different traces for target, observed, and counterfactual. Both volume and lake level.
+
+### Additional plots. Ordered A, B, C, etc.
+Figure A - Version 1. Lake Level (left axis) and precipitation (right axis).
+
+Figure A - Version 2. Lake volume (left axis).
+
+Figure A - Version 3. Precipitation on top panel and Lake Volume on bottom panel.
     
-Then the Bibliometrix package was used to make the remaining plots of article data.
+Figure B. Lake Bathymetry curve (elevation versus volume).
+
+Figures C, D, ... K. Bibliometrix plots.
 
 ## Requested Citation
 David E. Rosenberg (2021). "Bibliometrix Analaysis for Lake Urmia Peer Reviewed Literature: 1900 to Sept. 2020", Utah State University, Logan, Utah. 
@@ -196,7 +204,7 @@ dfArticleOrdered %>%
 
 \newpage
 
-## Figure 1. Journal articles by year vs Lake Level
+## Figure 3. Journal articles by year vs Lake Level
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8, warning=FALSE}
 
@@ -275,9 +283,7 @@ print(pArticleCount)
 
 \newpage
 
-## Figure 2. Lake Restoration progress over time.
-
-## Version 1. Lake elevation (left axis) vs Precipitation (right axis)
+## Figure A - Version 1. Lake Restoration progress over time. Lake elevation (left axis) vs Precipitation (right axis).
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=3.5, warning=FALSE}
 
@@ -399,7 +405,7 @@ ggplot(data = dfParsinejad, aes(x = Year)) +
 
 ```
 
-## Version 2. Lake restoration progress over time: Lake volume (left axis) vs precipitation (right axis)
+## Figure A - Version 2. Lake restoration progress over time: Lake volume (left axis) vs precipitation (right axis)
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=3.5, warning=FALSE}
 
@@ -499,7 +505,7 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
 ```
 
 \newpage
-## Version 3. Lake Restoration progress over time: Lake Volume (left axis) vs Lake Level (right axis)
+## Figure 7. Restoration progress over time: Lake Volume (left axis) vs Lake Level (right axis).
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=4, warning=FALSE}
 
@@ -552,7 +558,7 @@ ggplot(data=dfParsinejad, aes(x=Year)) +
 ```
 
 \newpage
-## Version 4. Lake Restoration progress over time: Precipitation (top), Lake Volume and Lake Level (bottom)
+## Figure A - Version 3. Lake Restoration progress over time: Precipitation (top), Lake Volume and Lake Level (bottom).
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=9, fig.height=7, warning=FALSE}
 
@@ -654,7 +660,7 @@ sByElev <- paste0("Percent recovery by elevation: ",sprintf("%.1f", nFractRecove
 `r sByElev`
 
 \newpage
-## Lake Bathymetry curve: elevation vs volume
+## Figure B. Lake Bathymetry curve: elevation vs volume
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8, warning=FALSE}
 
@@ -671,7 +677,7 @@ ggplot(data=dfLakeBathymetry, aes(x=`Volume (BCM)`,y=`Elevation(m)`)) +
 
 \newpage
 
-## Counts of Articles that share data and collaborate
+## Figure C. Counts of Articles that share data and collaborate.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=8, fig.height=8}
 
@@ -720,7 +726,7 @@ ggplot(data = dfArticlesShare) +
 
 \newpage
 
-## Figure 2. Top cited articles
+## Figure D. Top cited articles.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8}
 
@@ -758,7 +764,7 @@ ggplot(dfArticleCites[0:lPrint,], aes(x=reorder(PaperDesc,TC), y=TC)) +
 
 ```
 
-## Figure 3. Author team size
+## Figure E. Author team size.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8}
 # Figure 3. Plot number of authors
@@ -820,7 +826,7 @@ write.csv(dfArticlePushOut, "UrmiaArticlesSorted2020.csv")
 
 ```
 
-## Figure 4. Most frequent journals
+## Figure F. Most frequent journals.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8}
 ### Figure 4 - Most frequent journals
@@ -853,7 +859,7 @@ ggplot(data = dfJournalCounts[0:lPrint,], aes(x=reorder(SourceTitleShort,V1),y=V
 
 ```
 
-## Figure 5. Author keyword frequency
+## Figure G. Author keyword frequency.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8}
 ### Figure 5 Key word frequency
@@ -907,7 +913,7 @@ CR$Papers[1:lPrint,]
 
 ```
 
-## Figures 6 - 8. Network plots
+## Figures H, I, J. Bibliometrix network plots.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8}
 #Top authors productivity over time
@@ -952,7 +958,7 @@ net=networkPlot(NetMatrix, normalize="association", weighted=T, n = 30, Title = 
 
 ```
 
-## Figure 9. Historical citation network
+## Figure K. Bibliometrix historical citation network.
 
 ```{r echo=FALSE,results='hide',fig.keep='all', fig.width=13, fig.height=8}
 
